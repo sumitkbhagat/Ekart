@@ -29,12 +29,13 @@ pipeline {
             }
         }
         
-        stage('Sonarqube Scanner') {
+        stage('Sonarqube Scanner')  {
             steps {
-                withSonarQubeEnv('sonar'){
+                withSonarQubeEnv('sonar') {
+
                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=EKART \
                    -Dsonar.java.binaries=. \
-                    -Dsonar.host.url=http://13.234.204.138:9000 \
+                   -Dsonar.host.url=http://13.233.88.2:9000/ \
                    -Dsonar.projectKey=EKART '''
                }
             }
