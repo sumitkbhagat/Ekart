@@ -5,9 +5,7 @@ pipeline {
         maven  'maven3'
     }
     
-    environment{
-        SCANNER_HOME= tool 'sonar'
-    }
+    
     
     stages {
         stage('Git Checkout') {
@@ -29,17 +27,18 @@ pipeline {
             }
         }
         
-        stage('Sonarqube Scanner')  {
-            steps {
-                withSonarQubeEnv('sonar') {
-
-                   sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=EKART \
-                   -Dsonar.java.binaries=. \
-                   -Dsonar.host.url=http://13.233.88.2:9000/ \
-                   -Dsonar.projectKey=EKART '''
-               }
+       stage('SONAR SCANNER') {
+            environment {
+            sonar_token = credentials('SONAR_TOKEN')
             }
-        }
+            steps {
+                sh 'mvn sonar:sonar -Dsonar.projectName=$EKART \
+                    -Dsonar.projectKey=$EKART \
+                    -Dsonar.host.url=http://13.233.88.2:9000 \
+                    -Dsonar.token=$SONAR_TOKEN'
+            }
+        } 
+        
         
         stage('Build') {
             steps {
