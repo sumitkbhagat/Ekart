@@ -38,6 +38,7 @@ pipeline {
                     -Dsonar.token=$SONAR_TOKEN'
             }
         } 
+}
         
         
         stage('Build') {
