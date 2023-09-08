@@ -1,1 +1,49 @@
-
+pipeline {
+    agent any
+    tools{
+        jdk  'jdk-11'
+        maven  'maven3'
+    }
+    
+    environment{
+        SCANNER_HOME= tool 'sonar'
+    }
+    
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', changelog: false, credentialsId: '15fb69c3-3460-4d51-bd07-2b0545fa5151', poll: false, url: 'https://github.com/sumitkbhagat/Ekart.git'
+            }
+        }
+        
+        stage('COMPILE') {
+            steps {
+                sh "mvn clean compile -DskipTests=true"
+            }
+        }
+        
+        stage('OWASP Scan') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ ', odcInstallation: 'DC'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        
+        stage('Sonarqube Scanner') {
+            steps {
+                withSonarQubeEnv('sonar'){
+                   sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=EKART \
+                   -Dsonar.java.binaries=. \
+                   -Dsonar.projectKey=EKART '''
+               }
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh "mvn clean package -DskipTests=true"
+            }
+        }
+        
+       }
+}
