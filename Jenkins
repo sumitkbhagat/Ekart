@@ -47,6 +47,19 @@ pipeline {
                 sh "mvn clean package -DskipTests=true"
             }
         }
+ stage('Docker Build & Push') {
+            steps {
+                script{
+                    withDockerRegistry(credentialsId: '2fe19d8a-3d12-4b82-ba20-9d22e6bf1672', toolName: 'docker') {
+                        
+                        sh "docker build -t EKART -f docker/Dockerfile ."
+                        sh "docker tag  EKART sumitkumarbhagat/EKART:latest"
+                        sh "docker push sumitkumarbhagat/EKART:latest"
+                    }
+                }
+            }
+        }
+        
         
        }
 }
