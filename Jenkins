@@ -47,14 +47,13 @@ pipeline {
                 sh "mvn clean package -DskipTests=true"
             }
         }
- stage('Docker Build & Push') {
+ stage('Docker Build & Tag') {
             steps {
                 script{
                     withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
-                        
                         sh "docker build -t EKART -f docker/Dockerfile ."
                         sh "docker tag  EKART sumitkumarbhagat/EKART:latest"
-                        sh "docker push sumitkumarbhagat/EKART:latest"
+                       
                     }
                 }
             }
